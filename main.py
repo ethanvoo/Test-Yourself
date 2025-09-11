@@ -5,6 +5,13 @@ root = ctk.CTk()
 root.geometry("600x600")
 root.title("Test Yourself")
 
+root.grid_columnconfigure(0, weight=1)
+root.grid_rowconfigure(0, weight=1)
+
+MAIN_BUTTON_COLOR = (0, 122, 204)
+MAIN_BUTTON_HOVER_COLOR = (21, 143, 209)
+MAIN_TEXT_COLOR = (255, 255, 255)
+
 selected_topics: list = []
 add_selected_subjects: list = []
 topic_add_to: str = ''
@@ -119,7 +126,7 @@ def add_questions():
     global add_questions_frame
     global select_subject_frame
     add_questions_frame = ctk.CTkFrame(main_frame)
-    add_questions_frame.grid(row=0, column=0)
+    add_questions_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
     
 
     choose_subject_label = ctk.CTkLabel(add_questions_frame, text='Choose Subject:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))
@@ -151,22 +158,80 @@ def back_to_home_btn():
     back_to_home_btn = ctk.CTkButton(main_frame, text="Back to Home", width=75, height=24, command=back_to_home_btn_callback)
     back_to_home_btn.grid(column=0, padx=20, pady=20)
 
+def fade_effect(widget, attribute, start_color, end_color, steps=10, delay=10):
+    r1, g1, b1 = start_color
+    r2, g2, b2 = end_color
+
+    dr = (r2 - r1) / steps
+    dg = (g2 - g1) / steps
+    db = (b2 - b1) / steps
+
+    for i in range(steps + 1):
+        r = int(r1 + dr * i)
+        g = int(g1 + dg * i)
+        b = int(b1 + db * i)
+        print(r, g, b)
+        color = _from_rgb((r, g, b))
+        widget.configure(**{attribute: color})
+        widget.update()
+        widget.after(delay)
+
+def on_hover_button(event, widget=None):
+    print("Hover")
+    fade_effect(widget=widget, attribute="fg_color", start_color=MAIN_BUTTON_COLOR, end_color=MAIN_BUTTON_HOVER_COLOR, steps=10, delay=30)
+
+def on_leave_button(event, widget=None):
+    print("Unhover")
+    fade_effect(widget=widget, attribute="fg_color", start_color=MAIN_BUTTON_HOVER_COLOR, end_color=MAIN_BUTTON_COLOR, steps=10, delay=30)
+
+def _from_rgb(rgb):
+    return "#%02x%02x%02x" % rgb 
+
 def start():
     remake_frame()
-    global selection_frame
+    global selection_frame, select_subject_button, add_questions_button
     
     selection_frame = ctk.CTkFrame(main_frame)
-    selection_frame.grid(row=0, column=0)
-    select_subject_button = ctk.CTkButton(selection_frame, text="Select Subject", width=100, height=24, command=select_subject)
-    select_subject_button.pack(padx=20, pady=20)
+    selection_frame.columnconfigure(0, weight=1)
+    selection_frame.rowconfigure((1, 2), weight=1)
+    selection_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
 
-    add_questions_button = ctk.CTkButton(selection_frame, text="Add Questions", width=100, height=24, command=add_questions)
-    add_questions_button.pack(padx=20, pady=20)
+    title = ctk.CTkLabel(selection_frame, 
+                         text='Test Yourself', 
+                         width=30, height=28, 
+                         fg_color='transparent', 
+                         font=("Calibre", 40),
+                         text_color=_from_rgb(MAIN_TEXT_COLOR))
+    title.grid(row=0, column=0, padx=20, pady=20)
+
+    select_subject_button = ctk.CTkButton(selection_frame, 
+                                          text="Select Subject",
+                                          command=select_subject, 
+                                          font=("Calibre", 23), 
+                                          fg_color=_from_rgb(MAIN_BUTTON_COLOR), 
+                                          text_color=_from_rgb(MAIN_TEXT_COLOR))
+    
+    select_subject_button.grid(column=0, row=1, padx=20, pady=20, sticky="nesw")
+    select_subject_button.bind("<Enter>", lambda x: on_hover_button(x, widget=select_subject_button))
+    select_subject_button.bind("<Leave>", lambda x: on_leave_button(x, widget=select_subject_button))
+
+    add_questions_button = ctk.CTkButton(selection_frame, 
+                                         text="Add Questions",
+                                         command=add_questions, 
+                                         font=("Calibre", 23), 
+                                         fg_color=_from_rgb(MAIN_BUTTON_COLOR), 
+                                         text_color=_from_rgb(MAIN_TEXT_COLOR))
+    
+    add_questions_button.grid(column=0, row=2, padx=20, pady=20, sticky="nesw")
+    add_questions_button.bind("<Enter>", lambda x: on_hover_button(x, widget=add_questions_button))
+    add_questions_button.bind("<Leave>", lambda x: on_leave_button(x, widget=add_questions_button))
 
 def remake_frame():
     global main_frame
     main_frame = ctk.CTkFrame(root)
-    main_frame.pack(fill="both", expand=True)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid(row=0, column=0, sticky="nsew")
 
 start()
 root.mainloop()
