@@ -8,9 +8,11 @@ root.title("Test Yourself")
 root.grid_columnconfigure(0, weight=1)
 root.grid_rowconfigure(0, weight=1)
 
-MAIN_BUTTON_COLOR = (0, 122, 204)
-MAIN_BUTTON_HOVER_COLOR = (21, 143, 209)
-MAIN_TEXT_COLOR = (255, 255, 255)
+MAIN_BUTTON_COLOR: tuple[int, int, int] = (0, 122, 204)
+MAIN_BUTTON_HOVER_COLOR: tuple[int, int, int] = (21, 143, 209)
+MAIN_TEXT_COLOR: tuple[int, int, int] = (255, 255, 255)
+
+end_fade: bool = False
 
 selected_topics: list = []
 add_selected_subjects: list = []
@@ -32,28 +34,56 @@ def get_choice(choice):
             return json.load(f)
 
 def optionmenu_callback(choice):
-    global select_topic_frame
-    select_topic_frame = ctk.CTkFrame(main_frame)
-    select_topic_frame.grid(column=0, row=1)
+    global select_topic_frame, main_frame
+    main_frame.grid_rowconfigure(0, weight=0)
+    main_frame.grid_columnconfigure(0, weight=1)
     topics = get_choice(choice)
     topic_names = list(topics.keys()) # type: ignore
     
-    for i, topic in enumerate(topic_names):
-        check_var = ctk.StringVar(value='on')
-        checkbox = ctk.CTkCheckBox(select_topic_frame, text=topic, width=100, height=24, checkbox_width=24, checkbox_height=24,
-                                             variable=check_var, onvalue='on', offvalue='off')
-        checkbox.grid(column=0, row=i, padx=20, pady=10)
+    select_topic_frame = ctk.CTkFrame(main_frame)
+    select_topic_frame.grid(column=0, row=1, sticky="nsew", padx=20, pady=20)
     
-    begin_button = ctk.CTkButton(select_topic_frame, text="Begin", width=100, height=24, command=begin)
-    begin_button.grid(column=0, row=len(topic_names), padx=20, pady=10)
-    back_to_home_btn()
+    select_topic_frame.grid_columnconfigure(0, weight=1)
+    col = 0
+    row = 0
+    for i, topic in enumerate(topic_names):
+        print(row, col)
+        if i % 5 == 0 and i != 0:
+            col += 1
+            row = 0
+        
+        check_var = ctk.StringVar(value='on')
+        checkbox = ctk.CTkCheckBox(select_topic_frame, 
+                                   text=topic,
+                                   height=24, 
+                                   checkbox_width=24, 
+                                   checkbox_height=24,
+                                   variable=check_var, 
+                                   onvalue='on', 
+                                   offvalue='off')
+        
+        checkbox.grid(column=col, row=row+1, padx=20, pady=10)
+        select_topic_frame.grid_columnconfigure(col, weight=1)
+        row += 1
+    
+    begin_button = ctk.CTkButton(select_topic_frame,
+                                 text="Begin",
+                                 height=40,
+                                 command=begin,
+                                 font=("Calibre", 20),
+                                 fg_color=_from_rgb(MAIN_BUTTON_COLOR),
+                                 text_color=_from_rgb(MAIN_TEXT_COLOR))
+    
+    begin_button.grid(column=0, row=len(topic_names)+2, padx=20, pady=20, columnspan=2, sticky="nsew")
 
 def begin():
+    global select_topic_frame
     displayed_topics = select_topic_frame.winfo_children()
     
     for i, displayed_topic in enumerate(displayed_topics):
         if i == len(displayed_topics) -1:
             break
+        
         selected = displayed_topic.cget("variable")
         if selected.get() == "on":
             selected_topics.append(displayed_topic.cget("text"))
@@ -71,7 +101,10 @@ def select_subject():
     selection_frame.destroy()
     global select_subject_frame
     select_subject_frame = ctk.CTkFrame(main_frame)
-    select_subject_frame.grid(column=0, row=0)
+    
+    select_subject_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20)
+    select_subject_frame.grid_rowconfigure(0, weight=0)
+    select_subject_frame.grid_columnconfigure((0, 1), weight=1)
 
     label = ctk.CTkLabel(select_subject_frame, text='Choose Subject:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))
     label.grid(row=0, column=0, padx=20, pady=20)
@@ -159,6 +192,9 @@ def back_to_home_btn():
     back_to_home_btn.grid(column=0, padx=20, pady=20)
 
 def fade_effect(widget, attribute, start_color, end_color, steps=10, delay=10):
+    global end_fade
+
+    print(widget)
     r1, g1, b1 = start_color
     r2, g2, b2 = end_color
 
@@ -167,22 +203,32 @@ def fade_effect(widget, attribute, start_color, end_color, steps=10, delay=10):
     db = (b2 - b1) / steps
 
     for i in range(steps + 1):
+        
         r = int(r1 + dr * i)
         g = int(g1 + dg * i)
         b = int(b1 + db * i)
-        print(r, g, b)
         color = _from_rgb((r, g, b))
         widget.configure(**{attribute: color})
         widget.update()
         widget.after(delay)
 
-def on_hover_button(event, widget=None):
+def on_hover_button(event, widget):
     print("Hover")
-    fade_effect(widget=widget, attribute="fg_color", start_color=MAIN_BUTTON_COLOR, end_color=MAIN_BUTTON_HOVER_COLOR, steps=10, delay=30)
+    global end_fade
+    end_fade = True
+    current_color = widget.cget("fg_color").lstrip('#')
+    current_color = tuple(int(current_color[i:i+2], 16) for i in (0, 2, 4))
+    
+    fade_effect(widget=widget, attribute="fg_color", start_color=current_color, end_color=MAIN_BUTTON_HOVER_COLOR, steps=10, delay=30)
 
-def on_leave_button(event, widget=None):
+def on_leave_button(event, widget):
     print("Unhover")
-    fade_effect(widget=widget, attribute="fg_color", start_color=MAIN_BUTTON_HOVER_COLOR, end_color=MAIN_BUTTON_COLOR, steps=10, delay=30)
+    global end_fade
+    end_fade = True
+    
+    current_color = widget.cget("fg_color").lstrip('#')
+    current_color = tuple(int(current_color[i:i+2], 16) for i in (0, 2, 4))
+    fade_effect(widget=widget, attribute="fg_color", start_color=current_color, end_color=MAIN_BUTTON_COLOR, steps=10, delay=30)
 
 def _from_rgb(rgb):
     return "#%02x%02x%02x" % rgb 
@@ -212,8 +258,6 @@ def start():
                                           text_color=_from_rgb(MAIN_TEXT_COLOR))
     
     select_subject_button.grid(column=0, row=1, padx=20, pady=20, sticky="nesw")
-    select_subject_button.bind("<Enter>", lambda x: on_hover_button(x, widget=select_subject_button))
-    select_subject_button.bind("<Leave>", lambda x: on_leave_button(x, widget=select_subject_button))
 
     add_questions_button = ctk.CTkButton(selection_frame, 
                                          text="Add Questions",
@@ -223,8 +267,7 @@ def start():
                                          text_color=_from_rgb(MAIN_TEXT_COLOR))
     
     add_questions_button.grid(column=0, row=2, padx=20, pady=20, sticky="nesw")
-    add_questions_button.bind("<Enter>", lambda x: on_hover_button(x, widget=add_questions_button))
-    add_questions_button.bind("<Leave>", lambda x: on_leave_button(x, widget=add_questions_button))
+    
 
 def remake_frame():
     global main_frame
