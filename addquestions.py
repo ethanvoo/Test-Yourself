@@ -93,16 +93,25 @@ class AddQuestionsFrame:
 
     def add_question_to_file(self, subject: str, topic: str, question: str, answer: str):
         if subject == '<None>' or topic == '<None>' or question == '' or answer == '':
+            print(subject, topic, question, answer)
+            self.error_label = ctk.CTkLabel(self.add_questions_frame, text="Please fill in all fields", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            self.error_label.grid(row=4, column=0, padx=20, pady=20, columnspan=2)
             return
 
         data: dict = util.get_choice(subject, "r")
-
+        if "error" in data:
+            self.error_label = ctk.CTkLabel(self.add_questions_frame, text=data["error"], fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            self.error_label.grid(row=4, column=0, padx=20, pady=20, columnspan=2)
+            return
+        
         if topic not in data:
             return
         
         data[topic].append({"question": question,
                         "answer": answer})
         util.get_choice(subject, "w", write_data=data)
+        self.add_answer_entry.delete(0, 'end')
+        self.add_question_entry.delete(0, 'end')
 
 
     def create_question(self):
@@ -117,8 +126,8 @@ class AddQuestionsFrame:
             elif displayed_widget.winfo_name() == "!ctkentry2":
                 answer = displayed_widget.get()
             elif displayed_widget.winfo_name() == "!ctkoptionmenu":
-                subject = displayed_widget.get()
+                subject = self.subject_optionmenu_var.get()
             elif displayed_widget.winfo_name() == "!ctkoptionmenu2":
-                topic = displayed_widget.get()
+                topic = self.topic_optionmenu_var.get()
 
         self.add_question_to_file(subject, topic, question, answer)

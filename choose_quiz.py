@@ -1,14 +1,15 @@
 import customtkinter as ctk
 import utility as util
 import colors
-import ask_questions, remakeframe
+import ask_questions
 
 class ChooseQuizFrame:
-    def __init__(self, master, root):
+    def __init__(self, master, root, back_to_home_btn):
         self.main_frame = master
         self.select_subject_frame = ctk.CTkFrame(master)
         self.selected_topics: list = []
         self.root = root
+        self.back_to_home_btn = back_to_home_btn
 
         self.select_subject_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20)
         self.select_subject_frame.grid_rowconfigure(0, weight=0)
@@ -66,10 +67,17 @@ class ChooseQuizFrame:
 
         self.begin_button.grid(column=0, row=len(topic_names)+2, padx=20, pady=20, columnspan=2, sticky="nsew")
 
+    def remake_frame(self):
+        self.main_frame = ctk.CTkFrame(self.root)
+        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.main_frame.grid_rowconfigure(0, weight=1)
+        self.main_frame.grid(row=0, column=0, sticky="nsew")
+
     def begin(self):
         displayed_topics = self.select_topic_frame.winfo_children()
-        remakeframe.remake_frame(self.root)
-        ask_questions.AskQuestionsFrame(self.main_frame, displayed_topics=displayed_topics, selected_topics=self.selected_topics)
+        self.remake_frame()
+        ask_questions.AskQuestionsFrame(self.main_frame, displayed_topics=displayed_topics, selected_topics=self.selected_topics, back_to_home_btn=self.back_to_home_btn)
+        self.back_to_home_btn()
         
     
     

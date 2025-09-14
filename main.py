@@ -1,8 +1,8 @@
 import customtkinter as ctk
 import utility as util
 import colors
-import addquestions
-import choose_quiz
+import addquestions, choose_quiz
+
 
 root = ctk.CTk()
 root.geometry("600x600")
@@ -26,7 +26,7 @@ def back_to_home_btn():
 
  
 def start():
-    remake_frame()
+    remake_frame(root)
     
     
     selection_frame = ctk.CTkFrame(main_frame)
@@ -61,18 +61,28 @@ def start():
     add_questions_button.grid(column=0, row=2, padx=20, pady=20, sticky="nesw")
 
 def add_questions():
+    global main_frame
     main_frame.destroy() # type: ignore
-    remake_frame()
+    remake_frame(root)
+    main_frame = ctk.CTkFrame(root)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid(row=0, column=0, sticky="nsew")
     addquestions.AddQuestionsFrame(main_frame)
     back_to_home_btn()
 
 def select_subject():
     main_frame.destroy() # type: ignore
-    remake_frame()
-    choose_quiz.ChooseQuizFrame(main_frame, root)
+    remake_frame(root)
+    choose_quiz.ChooseQuizFrame(main_frame, root, back_to_home_btn)
     back_to_home_btn()
     
-
+def remake_frame(root):
+    global main_frame
+    main_frame = ctk.CTkFrame(root)
+    main_frame.grid_columnconfigure(0, weight=1)
+    main_frame.grid_rowconfigure(0, weight=1)
+    main_frame.grid(row=0, column=0, sticky="nsew")
 
 start()
 root.mainloop()
