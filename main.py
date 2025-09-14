@@ -2,6 +2,23 @@ import customtkinter as ctk
 import utility as util
 import colors
 import addquestions, choose_quiz
+import os
+
+file_path = "LeaderBoard.csv"
+if not os.path.exists(file_path):
+    file = open("LeaderBoard.csv","w")
+    file.write("Random Dice Leader board!\n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.write(" , \n")
+    file.close()
 
 
 root = ctk.CTk()
@@ -21,7 +38,11 @@ def back_to_home_btn_callback():
     start()
 
 def back_to_home_btn():
-    back_to_home_btn = ctk.CTkButton(main_frame, text="Back to Home", width=75, height=24, command=back_to_home_btn_callback)
+    back_to_home_btn = ctk.CTkButton(main_frame,
+                                     text="Back to Home",
+                                     width=75, height=24,
+                                     command=back_to_home_btn_callback)
+    
     back_to_home_btn.grid(column=0, padx=20, pady=20, sticky="w")
 
  
@@ -40,7 +61,9 @@ def start():
                          fg_color='transparent', 
                          font=("Calibre", 40),
                          text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+    
     title.grid(row=0, column=0, padx=20, pady=20)
+
 
     select_subject_button = ctk.CTkButton(selection_frame, 
                                           text="Select Subject",
@@ -50,6 +73,7 @@ def start():
                                           text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
  
     select_subject_button.grid(column=0, row=1, padx=20, pady=20, sticky="nesw")
+
 
     add_questions_button = ctk.CTkButton(selection_frame, 
                                          text="Add Questions",
