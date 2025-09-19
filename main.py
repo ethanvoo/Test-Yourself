@@ -7,6 +7,8 @@ import addquestions, choose_quiz
 root = ctk.CTk()
 root.geometry("600x600")
 root.title("Test Yourself")
+ctk.set_appearance_mode("dark")
+
 
 root.grid_columnconfigure(0, weight=1)
 root.grid_rowconfigure(0, weight=1)
@@ -85,4 +87,4 @@ def remake_frame(root):
     main_frame.grid(row=0, column=0, sticky="nsew")
 
 start()
-root.mainloop()
+root.mainloop() 

@@ -75,8 +75,14 @@ class ChooseQuizFrame:
 
     def begin(self):
         displayed_topics = self.select_topic_frame.winfo_children()
+        for displayed_topic in displayed_topics:
+            if "ctkcheckbox" in displayed_topic.winfo_name():
+                if displayed_topic.get() == "on":
+                    self.selected_topics.append(displayed_topic.cget("text"))
+        
+        
         self.remake_frame()
-        ask_questions.AskQuestionsFrame(self.main_frame, displayed_topics=displayed_topics, selected_topics=self.selected_topics, back_to_home_btn=self.back_to_home_btn)
+        ask_questions.AskQuestionsFrame(self.main_frame, selected_topics=self.selected_topics)
         self.back_to_home_btn()
         
     
