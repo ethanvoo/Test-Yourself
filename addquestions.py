@@ -8,7 +8,9 @@ class AddQuestionsFrame:
         self.topic_add_to: str = ""
         self.topics_list: list = []
         self.answer: ctk.StringVar = ctk.StringVar()
+        self.answer_buttons: list = []
         self.awarded_words: list = []
+        
 
         self.add_questions_frame = ctk.CTkFrame(master)
         self.add_questions_frame.grid(row=0, column=0, sticky="nesw", padx=20, pady=20)
@@ -70,16 +72,17 @@ class AddQuestionsFrame:
 
         self.add_answer_entry.grid(column=1, row=3, padx=20, pady=20, sticky="w")
 
-        self.answer_marks_frame = ctk.CTkFrame(self.add_questions_frame, fg_color='transparent')
-        self.answer_marks_frame.grid(row=4, column=0, padx=20,columnspan=2)
+        self.answer_marks_frame = ctk.CTkScrollableFrame(self.add_questions_frame, fg_color='transparent')
+        self.answer_marks_frame.grid(row=4, column=0, padx=20,columnspan=2, sticky="ew")
 
         
 
 
         self.add_question_button = ctk.CTkButton(self.add_questions_frame, text="Add Question", height=40, command=self.create_question)
-        self.add_question_button.grid(column=0, padx=20, pady=20, row=5, columnspan=2, sticky="ew")
+        self.add_question_button.grid(column=0, padx=20, pady=20, row=6, columnspan=2, sticky="ew")
 
     def input_callback(self, var, index, mode):
+
         current_input: str = self.answer.get()
         self.answer_word_list = current_input.split(' ')
         
@@ -88,6 +91,7 @@ class AddQuestionsFrame:
         row = 0
         col = 0
         for word in self.answer_word_list:
+            print(row, col, word)
             if word == '':
                 break
             if col % 5 == 0 and col != 0:
@@ -102,10 +106,20 @@ class AddQuestionsFrame:
                                    text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR), 
                                    command=lambda args=word: self.button_callback(args))
             button.grid(row=row, column=col)
+            
             col += 1
 
     def button_callback(self, word):
-        self.awarded_words.append(word)
+        for button in self.answer_marks_frame.winfo_children():
+            if button.cget("text") == word:
+                if button.cget("fg_color") == "transparent":
+                    button.configure(fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR), text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+                    self.awarded_words.append(word)
+                else:
+                    button.configure(fg_color="transparent", text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+                    self.awarded_words.remove(word)
+                break
+            
 
     def add_topic_callback(self):
         self.message = ctk.CTkInputDialog(text="Enter Topic Name:", title="Add Topic")
@@ -130,12 +144,12 @@ class AddQuestionsFrame:
         self.topic_add_to = value
 
 
-    def add_question_to_file(self, subject: str, topic: str, question: str, answer: str):
+    def add_question_to_file(self, subject: str, topic: str, question: str, answer: str, awarded_words):
         if subject == '<None>' or topic == '<None>' or question == '' or answer == '':
-            print(subject, topic, question, answer)
             self.error_label = ctk.CTkLabel(self.add_questions_frame, text="Please fill in all fields", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             self.error_label.grid(row=5, column=0, padx=20, pady=20, columnspan=2)
             return
+        
 
         data: dict = util.get_choice(subject, "r")
         if "error" in data:
@@ -149,12 +163,17 @@ class AddQuestionsFrame:
         data[topic].append({"question": question,
                             "answer": answer,
                             "awarded_words": self.awarded_words})
+        
+        self.awarded_words = []
+        
         util.get_choice(subject, "w", write_data=data)
         self.add_answer_entry.delete(0, 'end')
         self.add_question_entry.delete(0, 'end')
 
 
     def create_question(self):
+        awarded_words = util.remove_punctuation(self.awarded_words)
+
         displayed_widgets = self.add_questions_frame.winfo_children()
         answer: str = ''
         question: str = ''
@@ -170,4 +189,4 @@ class AddQuestionsFrame:
             elif displayed_widget.winfo_name() == "!ctkoptionmenu2":
                 topic = self.topic_optionmenu_var.get()
 
-        self.add_question_to_file(subject, topic, question, answer)
+        self.add_question_to_file(subject, topic, question, answer, awarded_words)

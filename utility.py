@@ -31,3 +31,18 @@ def get_choice(choice, mode, write_data=None) -> dict:
 
 def rgb_to_hex(rgb):
     return "#%02x%02x%02x" % rgb
+
+def remove_punctuation(words):
+    punctuation = '''!()-[]{};:'",<>./?@#$%^&*_~'''
+
+    if type(words) is list:
+        no_punct = []
+        for word in words:
+            no_punct.append(''.join(char for char in word if char not in punctuation))
+
+        return no_punct
+    elif type(words) is str:
+        return ''.join(char for char in words if char not in punctuation)
+    else:
+        return "Error"
+
