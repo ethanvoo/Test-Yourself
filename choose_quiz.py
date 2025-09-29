@@ -11,6 +11,7 @@ class ChooseQuizFrame:
         self.root = root
         self.back_to_home_btn = back_to_home_btn
         self.question_index = 0
+        self.subjects: list[str]= util.get_subjects()
 
         self.select_subject_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20)
         self.select_subject_frame.grid_rowconfigure(0, weight=0)
@@ -20,7 +21,7 @@ class ChooseQuizFrame:
         self.label.grid(row=0, column=0, padx=20, pady=20)
 
         self.optionmenu_var = ctk.StringVar(value='<None>')
-        self.optionmenu = ctk.CTkOptionMenu(self.select_subject_frame, values=['Chemistry', 'Computer Science', "Music"],
+        self.optionmenu = ctk.CTkOptionMenu(self.select_subject_frame, values=self.subjects,
                                                 width=140, height=28,
                                                 command=self.optionmenu_callback,
                                                 variable=self.optionmenu_var)
