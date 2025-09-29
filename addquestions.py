@@ -84,7 +84,8 @@ class AddQuestionsFrame:
     def input_callback(self, var, index, mode):
 
         current_input: str = self.answer.get()
-        self.answer_word_list = current_input.split(' ')
+        self.answer_word_list: list[str] = [word.strip() for word in current_input.split(' ') if word != '']
+        print(self.answer_word_list)
         
         for widget in self.answer_marks_frame.winfo_children():
             widget.destroy()
