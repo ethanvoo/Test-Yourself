@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import utility as util
 import colors
+import os
 
 class AddQuestionsFrame:
     def __init__(self, master):
@@ -9,9 +10,9 @@ class AddQuestionsFrame:
         self.topics_list: list = []
         self.answer: ctk.StringVar = ctk.StringVar()
         self.answer_buttons: list = []
-        self.awarded_words: list = []
+        self.awarded_words: list[str] = []
+        self.subjects: list[str] = util.get_subjects()
         
-
         self.add_questions_frame = ctk.CTkFrame(master)
         self.add_questions_frame.grid(row=0, column=0, sticky="nesw", padx=20, pady=20)
         self.add_questions_frame.grid_rowconfigure(0, weight=0)
@@ -28,11 +29,25 @@ class AddQuestionsFrame:
 
         self.subject_optionmenu_var = ctk.StringVar(value='<None>')
         self.subject_optionmenu = ctk.CTkOptionMenu(self.add_questions_frame, 
-                                                values=['Chemistry', 'Computer Science', "Music"],
+                                                values=self.subjects,
                                                 width=140, height=28,
                                                 command=self.subject_optionmenu_callback,
                                                 variable=self.subject_optionmenu_var)
         self.subject_optionmenu.grid(column=1, row=0, padx=20, pady=20, sticky="w")
+
+        self.add_subject_button = ctk.CTkButton(self.add_questions_frame,
+                                        text="Add", 
+                                        width=10, 
+                                        command=self.add_subject_callback)
+        self.add_subject_button.grid(row=0, column=1, padx=20, pady=20, sticky="e")
+    
+    def add_subject_callback(self):
+        message = ctk.CTkInputDialog(text="Enter Subject Name:", title="Add Subject")
+        subject_name = message.get_input()
+        util.add_subject(subject_name)
+        self.subjects = util.get_subjects()
+        self.subject_optionmenu.configure(values=self.subjects)
+    
     
     def subject_optionmenu_callback(self, value):
         self.subject_add_to = value
@@ -123,8 +138,8 @@ class AddQuestionsFrame:
             
 
     def add_topic_callback(self):
-        self.message = ctk.CTkInputDialog(text="Enter Topic Name:", title="Add Topic")
-        topic_name = self.message.get_input()
+        message = ctk.CTkInputDialog(text="Enter Topic Name:", title="Add Topic")
+        topic_name = message.get_input()
         
         data: dict = util.get_choice(self.subject_add_to, "r")
         data[topic_name] = []
