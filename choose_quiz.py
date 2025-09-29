@@ -10,6 +10,7 @@ class ChooseQuizFrame:
         self.selected_topics: list = []
         self.root = root
         self.back_to_home_btn = back_to_home_btn
+        self.question_index = 0
 
         self.select_subject_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20)
         self.select_subject_frame.grid_rowconfigure(0, weight=0)
@@ -80,10 +81,19 @@ class ChooseQuizFrame:
                 if displayed_topic.get() == "on":
                     self.selected_topics.append(displayed_topic.cget("text"))
         
+        subject = self.optionmenu_var.get()
+        data = util.get_choice(subject, "r")
         
+        self.create_question_frame()
+    
+    def create_question_frame(self):
+        self.main_frame.destroy() # type: ignore
         self.remake_frame()
-        ask_questions.AskQuestionsFrame(self.main_frame, selected_topics=self.selected_topics)
-        self.back_to_home_btn()
+
+        ask_questions.AskQuestionsFrame(self.main_frame, selected_topics=self.selected_topics, subject=self.optionmenu_var.get(), question_index=self.question_index)
+        
+        self.back_to_home_btn(self.main_frame)
+
         
     
     

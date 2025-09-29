@@ -113,10 +113,10 @@ class AddQuestionsFrame:
         for button in self.answer_marks_frame.winfo_children():
             if button.cget("text") == word:
                 if button.cget("fg_color") == "transparent":
-                    button.configure(fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR), text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+                    button.configure(fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR), text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
                     self.awarded_words.append(word)
                 else:
-                    button.configure(fg_color="transparent", text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+                    button.configure(fg_color="transparent", text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
                     self.awarded_words.remove(word)
                 break
             
@@ -162,7 +162,7 @@ class AddQuestionsFrame:
         
         data[topic].append({"question": question,
                             "answer": answer,
-                            "awarded_words": self.awarded_words})
+                            "awarded_words": awarded_words})
         
         self.awarded_words = []
         
@@ -173,8 +173,8 @@ class AddQuestionsFrame:
 
     def create_question(self):
         awarded_words = util.remove_punctuation(self.awarded_words)
-
         displayed_widgets = self.add_questions_frame.winfo_children()
+
         answer: str = ''
         question: str = ''
         subject: str = ''

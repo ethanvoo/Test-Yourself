@@ -1,34 +1,25 @@
 {
-    "TOpic 1": [
+    "T1": [
         {
-            "question": "Questin",
-            "answer": "This is an exact answer.",
+            "question": "T1 Q1",
+            "answer": "Must be exact!",
             "awarded_words": []
         },
         {
-            "question": "Question",
-            "answer": "This is awarded 2 marks for saying eat and food",
+            "question": "T1 Q2",
+            "answer": "May not be exact",
             "awarded_words": [
-                "eat",
-                "food"
+                "exact",
+                "not"
             ]
-        },
+        }
+    ],
+    "T2": [
         {
-            "question": "AA",
-            "answer": "This, has, punctuation",
+            "question": "T2 Q1",
+            "answer": "This conatins punctuation!",
             "awarded_words": [
-                "eat",
-                "food",
-                "has,",
-                "This,"
-            ]
-        },
-        {
-            "question": "QQQ",
-            "answer": "Important Keyword exact",
-            "awarded_words": [
-                "Important",
-                "Keyword"
+                "punctuation"
             ]
         }
     ]

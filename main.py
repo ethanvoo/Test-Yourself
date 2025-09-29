@@ -22,9 +22,9 @@ def back_to_home_btn_callback():
     main_frame.destroy() # type: ignore
     start()
 
-def back_to_home_btn():
-    back_to_home_btn = ctk.CTkButton(main_frame, text="Back to Home", width=75, height=24, command=back_to_home_btn_callback)
-    back_to_home_btn.grid(column=0, padx=20, pady=20, sticky="w")
+def back_to_home_btn(frame):
+    back_to_home_button = ctk.CTkButton(frame, text="Back to Home", width=75, height=24, command=back_to_home_btn_callback)
+    back_to_home_button.grid(column=0, padx=20, pady=20, sticky="w")
 
  
 def start():
@@ -71,13 +71,13 @@ def add_questions():
     main_frame.grid_rowconfigure(0, weight=1)
     main_frame.grid(row=0, column=0, sticky="nsew")
     addquestions.AddQuestionsFrame(main_frame)
-    back_to_home_btn()
+    back_to_home_btn(main_frame)
 
 def select_subject():
     main_frame.destroy() # type: ignore
     remake_frame(root)
     choose_quiz.ChooseQuizFrame(main_frame, root, back_to_home_btn)
-    back_to_home_btn()
+    back_to_home_btn(main_frame)
     
 def remake_frame(root):
     global main_frame

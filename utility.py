@@ -32,7 +32,7 @@ def get_choice(choice, mode, write_data=None) -> dict:
 def rgb_to_hex(rgb):
     return "#%02x%02x%02x" % rgb
 
-def remove_punctuation(words):
+def remove_punctuation(words) -> list[str] | str:
     punctuation = '''!()-[]{};:'",<>./?@#$%^&*_~'''
 
     if type(words) is list:
