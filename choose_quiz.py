@@ -44,13 +44,11 @@ class ChooseQuizFrame:
                 col += 1
                 row = 0
             
-            self.check_var = ctk.StringVar(value='on')
             self.checkbox = ctk.CTkCheckBox(self.select_topic_frame, 
                                     text=topic,
                                     height=24, 
                                     checkbox_width=24, 
-                                    checkbox_height=24,
-                                    variable=self.check_var, 
+                                    checkbox_height=24, 
                                     onvalue='on', 
                                     offvalue='off')
             
@@ -66,7 +64,8 @@ class ChooseQuizFrame:
                                     fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR),
                                     text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
 
-        self.begin_button.grid(column=0, row=len(topic_names)+2, padx=20, pady=20, columnspan=2, sticky="nsew")
+
+        self.begin_button.grid(column=0, padx=20, pady=20, columnspan=2, sticky="nsew")
 
     def remake_frame(self):
         self.main_frame = ctk.CTkFrame(self.root)
@@ -76,10 +75,21 @@ class ChooseQuizFrame:
 
     def begin(self):
         displayed_topics = self.select_topic_frame.winfo_children()
+        
+        checkbox_set: set[str] = set()
+
         for displayed_topic in displayed_topics:
-            if "ctkcheckbox" in displayed_topic.winfo_name():
-                if displayed_topic.get() == "on":
-                    self.selected_topics.append(displayed_topic.cget("text"))
+            if "ctkcheckbox" in displayed_topic.winfo_name() and displayed_topic.get() == "on":
+                checkbox_set.add("on")
+                self.selected_topics.append(displayed_topic.cget("text"))
+                continue
+            checkbox_set.add("off")
+        
+        if all("off" in state for state in checkbox_set):
+            error_label = ctk.CTkLabel(self.main_frame, text="Please select at least one topic", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            error_label.grid(row=2, column=0, padx=20, pady=20, sticky="ew")
+            checkbox_set = set()
+            return
         
         subject = self.optionmenu_var.get()
         data = util.get_choice(subject, "r")
