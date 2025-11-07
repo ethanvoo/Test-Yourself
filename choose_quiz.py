@@ -3,38 +3,38 @@ import utility as util
 import colors
 import ask_questions
 
-class ChooseQuizFrame:
-    def __init__(self, master, root, back_to_home_btn):
-        self.main_frame = master
-        self.select_subject_frame = ctk.CTkFrame(master)
+class ChooseQuizFrame(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
         self.selected_topics: list = []
-        self.root = root
-        self.back_to_home_btn = back_to_home_btn
+        
         self.question_index = 0
         self.subjects: list[str]= util.get_subjects()
 
-        self.select_subject_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20)
-        self.select_subject_frame.grid_rowconfigure(0, weight=0)
-        self.select_subject_frame.grid_columnconfigure((0, 1), weight=1)
+        
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_columnconfigure((0, 1), weight=1)
 
-        self.label = ctk.CTkLabel(self.select_subject_frame, text='Choose Subject:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))
+        self.label = ctk.CTkLabel(self, text='Choose Subject:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))
         self.label.grid(row=0, column=0, padx=20, pady=20)
 
         self.optionmenu_var = ctk.StringVar(value='<None>')
-        self.optionmenu = ctk.CTkOptionMenu(self.select_subject_frame, values=self.subjects,
+        self.optionmenu = ctk.CTkOptionMenu(self, values=self.subjects,
                                                 width=140, height=28,
                                                 command=self.optionmenu_callback,
                                                 variable=self.optionmenu_var)
         self.optionmenu.grid(column=1, row=0, padx=20, pady=20)
     
     def optionmenu_callback(self, choice):
-        self.main_frame.grid_rowconfigure(0, weight=0)
-        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_columnconfigure((0, 1), weight=1)
+
         topics = util.get_choice(choice, "r")
         topic_names = list(topics.keys())
         
-        self.select_topic_frame = ctk.CTkFrame(self.main_frame)
-        self.select_topic_frame.grid(column=0, row=1, sticky="nsew", padx=20, pady=20)
+        self.select_topic_frame = ctk.CTkFrame(self)
+        self.select_topic_frame.grid(column=0, row=1, sticky="nsew", padx=20, pady=20, columnspan=2)
         
         self.select_topic_frame.grid_columnconfigure(0, weight=1)
         col = 0
@@ -69,10 +69,7 @@ class ChooseQuizFrame:
         self.begin_button.grid(column=0, padx=20, pady=20, columnspan=2, sticky="nsew")
 
     def remake_frame(self):
-        self.main_frame = ctk.CTkFrame(self.root)
-        self.main_frame.grid_columnconfigure(0, weight=1)
-        self.main_frame.grid_rowconfigure(0, weight=1)
-        self.main_frame.grid(row=0, column=0, sticky="nsew")
+        self.destroy()
 
     def begin(self):
         displayed_topics = self.select_topic_frame.winfo_children()
@@ -87,7 +84,7 @@ class ChooseQuizFrame:
             checkbox_set.add("off")
         
         if all("off" in state for state in checkbox_set):
-            error_label = ctk.CTkLabel(self.main_frame, text="Please select at least one topic", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            error_label = ctk.CTkLabel(self, text="Please select at least one topic", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             error_label.grid(row=2, column=0, padx=20, pady=20, sticky="ew")
             checkbox_set = set()
             return
