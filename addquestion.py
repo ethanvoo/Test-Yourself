@@ -1,57 +1,36 @@
 import customtkinter as ctk
-import utility as util
+import utility as utils
 import colors
+import choosesubjectframe
 import os
 
 class AddQuestionsFrame:
-    def __init__(self, master):
-        self.subject_add_to: str = ""
+    def __init__(self, master, subject: str):
+        self.subject_add_to: str = subject
         self.topic_add_to: str = ""
         self.topics_list: list = []
         self.answer: ctk.StringVar = ctk.StringVar()
         self.answer_buttons: list = []
         self.awarded_words: list[str] = []
-        self.subjects: list[str] = util.get_subjects()
+        self.master = master
+
+        if not subject in utils.get_subjects():
+            utils.add_subject(self.subject_add_to)
         
         self.add_questions_frame = ctk.CTkFrame(master)
-        self.add_questions_frame.grid(row=0, column=0, sticky="nesw", padx=20, pady=20)
+        self.add_questions_frame.grid(row=0, column=0, sticky="nesw", columnspan=2)
         self.add_questions_frame.grid_rowconfigure(0, weight=0)
         self.add_questions_frame.grid_rowconfigure(4, weight=1)
         self.add_questions_frame.grid_columnconfigure((0, 1), weight=1)
 
-        self.choose_subject_label = ctk.CTkLabel(self.add_questions_frame,
-                                                 text='Choose Subject:',
+        self.subject_label = ctk.CTkLabel(self.add_questions_frame,
+                                                 text=self.subject_add_to,
                                                   width=30,
                                                   height=28,
                                                   fg_color='transparent',
                                                   font=("Calibre", 23))
-        self.choose_subject_label.grid(row=0, column=0, padx=20, pady=20, sticky="w")
+        self.subject_label.grid(row=0, column=0, padx=20, pady=20, sticky="ew", columnspan=2)
 
-        self.subject_optionmenu_var = ctk.StringVar(value='<None>')
-        self.subject_optionmenu = ctk.CTkOptionMenu(self.add_questions_frame, 
-                                                values=self.subjects,
-                                                width=140, height=28,
-                                                command=self.subject_optionmenu_callback,
-                                                variable=self.subject_optionmenu_var)
-        self.subject_optionmenu.grid(column=1, row=0, padx=20, pady=20, sticky="w")
-
-        self.add_subject_button = ctk.CTkButton(self.add_questions_frame,
-                                        text="Add", 
-                                        width=10, 
-                                        command=self.add_subject_callback)
-        self.add_subject_button.grid(row=0, column=1, padx=20, pady=20, sticky="e")
-    
-    def add_subject_callback(self):
-        message = ctk.CTkInputDialog(text="Enter Subject Name:", title="Add Subject")
-        subject_name = message.get_input()
-        util.add_subject(subject_name)
-        self.subjects = util.get_subjects()
-        self.subject_optionmenu.configure(values=self.subjects)
-    
-    
-    def subject_optionmenu_callback(self, value):
-        self.subject_add_to = value
-        self.topic_add_to = ''
         self.choose_topic_label = ctk.CTkLabel(self.add_questions_frame, text='Choose Topic:',
                                         width=30, 
                                         height=28, 
@@ -59,10 +38,14 @@ class AddQuestionsFrame:
                                         font=("Calibre", 23))
         self.choose_topic_label.grid(row=1, column=0, padx=20, pady=20, sticky="w")
 
-        topics = util.get_choice(value, "r")
+        
+
+        topics = utils.get_choice(self.subject_add_to, "r")
         self.topics_list = list(topics.keys())
 
-        self.topic_optionmenu_var = ctk.StringVar(value='<None>')
+        init_option_value: str = self.topics_list[0] if self.topics_list else '<None>'
+
+        self.topic_optionmenu_var = ctk.StringVar(value=init_option_value)
         self.topic_optionmenu = ctk.CTkOptionMenu(self.add_questions_frame, values=self.topics_list, width=140, height=28, command=self.topic_optionmenu_callback, variable=self.topic_optionmenu_var)
                                                 
         self.topic_optionmenu.grid(column=1, row=1, padx=20, pady=20, sticky="w")
@@ -96,6 +79,17 @@ class AddQuestionsFrame:
         self.add_question_button = ctk.CTkButton(self.add_questions_frame, text="Add Question", height=40, command=self.create_question)
         self.add_question_button.grid(column=0, padx=20, pady=20, row=6, columnspan=2, sticky="ew")
 
+        self.go_back_button = ctk.CTkButton(self.master,
+                                        text="Go Back",
+                                        command=self.go_back_callback)
+        self.go_back_button.grid(column=1, sticky="e", padx=10, pady=10)
+    
+    def go_back_callback(self):
+        self.add_questions_frame.destroy()
+        self.go_back_button.destroy()
+        choose_subject_frame = choosesubjectframe.ChooseSubjectFrame(self.master)
+        choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=3)
+
     def input_callback(self, var, index, mode):
 
         current_input: str = self.answer.get()
@@ -118,21 +112,22 @@ class AddQuestionsFrame:
                                    width=80, 
                                    fg_color="transparent", 
                                    border_width=1, 
-                                   border_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR), 
-                                   text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR), 
+                                   border_color=utils.rgb_to_hex(colors.MAIN_BUTTON_COLOR), 
+                                   text_color=utils.rgb_to_hex(colors.MAIN_TEXT_COLOR), 
                                    command=lambda args=word: self.button_callback(args))
             button.grid(row=row, column=col)
             
             col += 1
-
+        
+        
     def button_callback(self, word):
         for button in self.answer_marks_frame.winfo_children():
             if button.cget("text") == word:
                 if button.cget("fg_color") == "transparent":
-                    button.configure(fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR), text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
+                    button.configure(fg_color=utils.rgb_to_hex(colors.MAIN_BUTTON_COLOR), text_color=utils.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
                     self.awarded_words.append(word)
                 else:
-                    button.configure(fg_color="transparent", text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
+                    button.configure(fg_color="transparent", text_color=utils.rgb_to_hex(colors.MAIN_TEXT_COLOR)) # type: ignore
                     self.awarded_words.remove(word)
                 break
             
@@ -141,12 +136,12 @@ class AddQuestionsFrame:
         message = ctk.CTkInputDialog(text="Enter Topic Name:", title="Add Topic")
         topic_name = message.get_input()
         
-        data: dict = util.get_choice(self.subject_add_to, "r")
+        data: dict = utils.get_choice(self.subject_add_to, "r")
         data[topic_name] = []
         
-        util.get_choice(self.subject_add_to, "w", write_data=data)
+        utils.get_choice(self.subject_add_to, "w", write_data=data)
 
-        topics = util.get_choice(self.subject_add_to, "r")
+        topics = utils.get_choice(self.subject_add_to, "r")
         self.topics_list = list(topics.keys())
 
         self.topic_optionmenu_var = ctk.StringVar(value='<None>')
@@ -162,14 +157,14 @@ class AddQuestionsFrame:
 
     def add_question_to_file(self, subject: str, topic: str, question: str, answer: str, awarded_words):
         if subject == '<None>' or topic == '<None>' or question == '' or answer == '':
-            self.error_label = ctk.CTkLabel(self.add_questions_frame, text="Please fill in all fields", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            self.error_label = ctk.CTkLabel(self.add_questions_frame, text="Please fill in all fields", fg_color='transparent', font=("Calibre", 23), text_color=utils.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             self.error_label.grid(row=5, column=0, padx=20, pady=20, columnspan=2)
             return
         
 
-        data: dict = util.get_choice(subject, "r")
+        data: dict = utils.get_choice(subject, "r")
         if "error" in data:
-            self.error_label = ctk.CTkLabel(self.add_questions_frame, text=data["error"], fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            self.error_label = ctk.CTkLabel(self.add_questions_frame, text=data["error"], fg_color='transparent', font=("Calibre", 23), text_color=utils.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             self.error_label.grid(row=4, column=0, padx=20, pady=20, columnspan=2)
             return
         
@@ -182,18 +177,17 @@ class AddQuestionsFrame:
         
         self.awarded_words = []
         
-        util.get_choice(subject, "w", write_data=data)
+        utils.get_choice(subject, "w", write_data=data)
         self.add_answer_entry.delete(0, 'end')
         self.add_question_entry.delete(0, 'end')
 
 
     def create_question(self):
-        awarded_words = util.remove_punctuation(self.awarded_words)
+        awarded_words = utils.remove_punctuation(self.awarded_words)
         displayed_widgets = self.add_questions_frame.winfo_children()
 
         answer: str = ''
         question: str = ''
-        subject: str = ''
         topic: str = ''
         for i, displayed_widget in enumerate(displayed_widgets):
             if displayed_widget.winfo_name() == "!ctkentry":
@@ -201,8 +195,6 @@ class AddQuestionsFrame:
             elif displayed_widget.winfo_name() == "!ctkentry2":
                 answer = displayed_widget.get()
             elif displayed_widget.winfo_name() == "!ctkoptionmenu":
-                subject = self.subject_optionmenu_var.get()
-            elif displayed_widget.winfo_name() == "!ctkoptionmenu2":
                 topic = self.topic_optionmenu_var.get()
 
-        self.add_question_to_file(subject, topic, question, answer, awarded_words)
+        self.add_question_to_file(self.subject_add_to, topic, question, answer, awarded_words)
