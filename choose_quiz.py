@@ -8,7 +8,7 @@ class ChooseQuizFrame(ctk.CTkFrame):
         super().__init__(master)
 
         self.selected_topics: list = []
-        
+        self.master = master
         self.question_index = 0
         self.subjects: list[str]= util.get_subjects()
 
@@ -19,14 +19,29 @@ class ChooseQuizFrame(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text='Choose Subject:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))
         self.label.grid(row=0, column=0, padx=20, pady=20)
 
-        self.optionmenu_var = ctk.StringVar(value='<None>')
+        init_option_value: str = self.subjects[0] if self.subjects else '<None>'
+
+        self.optionmenu_var = ctk.StringVar(value=init_option_value)
         self.optionmenu = ctk.CTkOptionMenu(self, values=self.subjects,
                                                 width=140, height=28,
                                                 command=self.optionmenu_callback,
                                                 variable=self.optionmenu_var)
         self.optionmenu.grid(column=1, row=0, padx=20, pady=20)
+        self.optionmenu_callback(init_option_value)
+
+        self.go_back_button = ctk.CTkButton(self.master,
+                                    text="Go Back",
+                                    height=40,
+                                    command=self.go_back_callback,
+                                    font=("Calibre", 20),
+                                    fg_color=util.rgb_to_hex(colors.MAIN_BUTTON_COLOR),
+                                    text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+        self.go_back_button.grid(column=2, row=2, padx=20, pady=20, sticky="e")
     
     def optionmenu_callback(self, choice):
+        if self.optionmenu_var.get() == '<None>':
+            return
+        
         self.grid_rowconfigure(0, weight=0)
         self.grid_columnconfigure((0, 1), weight=1)
 
@@ -40,7 +55,6 @@ class ChooseQuizFrame(ctk.CTkFrame):
         col = 0
         row = 0
         for i, topic in enumerate(topic_names):
-            print(row, col)
             if i % 5 == 0 and i != 0:
                 col += 1
                 row = 0
@@ -95,12 +109,20 @@ class ChooseQuizFrame(ctk.CTkFrame):
         self.create_question_frame()
     
     def create_question_frame(self):
-        self.main_frame.destroy() # type: ignore
         self.remake_frame()
 
-        ask_questions.AskQuestionsFrame(self.main_frame, selected_topics=self.selected_topics, subject=self.optionmenu_var.get(), question_index=self.question_index)
+        ask_questions.AskQuestionsFrame(self.master, selected_topics=self.selected_topics, subject=self.optionmenu_var.get(), question_index=self.question_index, current_score=0)
+    
+    def go_back_callback(self):
+        from start_frame import StartFrame
         
-        self.back_to_home_btn(self.main_frame)
+        self.go_back_button.destroy()
+        self.remake_frame()
+
+        self.start_frame = StartFrame(self.master)
+        self.start_frame.grid(row=0, column=0, columnspan=2, sticky="nesw", rowspan=3)
+        
+        
 
         
     

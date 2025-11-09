@@ -5,11 +5,12 @@ import json
 import choose_quiz
 
 class AskQuestionsFrame:
-    def __init__(self, main_frame, selected_topics: list, subject, question_index: int):
+    def __init__(self, main_frame, selected_topics: list, subject, question_index: int, current_score: int):
         self.main_frame = main_frame
         self.selected_topics = selected_topics
         self.subject = subject
         self.question_index = question_index
+        self.score: int = current_score
 
         self.data = util.get_choice(self.subject, "r")
         self.all_questions = [question for topic in self.selected_topics for question in self.data.get(topic, [])]
@@ -28,7 +29,7 @@ class AskQuestionsFrame:
         self.awarded_words = self.question_dict.get("awarded_words", '') #'# type: ignore
         
         self.ask_question_frame = ctk.CTkFrame(main_frame)
-        self.ask_question_frame.grid(column=0, row=0, sticky="nsew")
+        self.ask_question_frame.grid(column=0, row=0, sticky="nsew", columnspan=3)
         self.ask_question_frame.columnconfigure(0, weight=1)
 
         self.question_label = ctk.CTkLabel(self.ask_question_frame, 
@@ -49,8 +50,9 @@ class AskQuestionsFrame:
     def submit_button_callback(self):    
         if self.validate_answer():
             self.ask_question_frame.destroy() # type: ignore
+            self.score += 1
             
-            self.__init__(self.main_frame, self.selected_topics, self.subject, self.question_index)
+            self.__init__(self.main_frame, self.selected_topics, self.subject, self.question_index, self.score)
             return
         
         if self.awarded_words:
@@ -64,12 +66,11 @@ class AskQuestionsFrame:
             self.incorrect_answer_label.grid(row=2, column=0, padx=20, pady=20, sticky="ew")
 
 
-        self.submit_button.configure(text="Next Question", command = lambda: self.__init__(self.main_frame, self.selected_topics, self.subject, self.question_index))
+        self.submit_button.configure(text="Next Question", command = lambda: self.__init__(self.main_frame, self.selected_topics, self.subject, self.question_index,current_score=self.score))
         return
     
     def validate_answer(self) -> bool:
         user_answer: str = util.remove_punctuation(self.enter_answer_var.get().lower().strip())
-        print(user_answer, self.awarded_words)
         if self.awarded_words:
             return all(word in user_answer for word in self.awarded_words)
         
@@ -77,7 +78,18 @@ class AskQuestionsFrame:
             
     
     def end_quiz(self):
-        self.main_frame.destroy() # type: ignore
-        
+        self.ask_question_frame.destroy()
+        score_label = ctk.CTkLabel(self.main_frame,
+                                   text=f"Quiz Complete! Your Score: {self.score} / {len(self.all_questions)}",
+                                   fg_color='transparent',
+                                   font=("Calibre", 30), 
+                                   text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+        score_label.grid(row=0, column=0, padx=20, pady=20, sticky="ew", columnspan=3)
+        percentage_label = ctk.CTkLabel(self.main_frame,
+                                   text=f"Percentage: {round((self.score / len(self.all_questions)) * 100, 2)}%",
+                                   fg_color='transparent',
+                                   font=("Calibre", 30), 
+                                   text_color=util.rgb_to_hex(colors.MAIN_TEXT_COLOR))
+        percentage_label.grid(row=1, column=0, padx=20, pady=20, sticky="ew", columnspan=3)
         return
         

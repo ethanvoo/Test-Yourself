@@ -2,6 +2,7 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 import addquestion
 
+
 import utility as utils
 
 
@@ -30,11 +31,27 @@ class ChooseSubjectFrame(ctk.CTkFrame):
 
         self.display_subject_scrollableframe = ctk.CTkScrollableFrame(self)
         self.display_subject_scrollableframe.grid(row=3, column=0, columnspan=3, sticky="nesw")
-        self.display_subject_scrollableframe.grid_rowconfigure([i for i in range(len(self.subjects))], weight=1)
-        
+        if self.subjects:
+            self.display_subject_scrollableframe.grid_rowconfigure([i for i in range(len(self.subjects))], weight=1)
+        else:
+            self.display_subject_scrollableframe.grid_rowconfigure(0, weight=1)
         self.display_subject_scrollableframe.grid_columnconfigure((0, 1), weight=1)
 
         self.search_bar_callback()
+
+        self.go_back_button = ctk.CTkButton(self.master,
+                                        text="Go Back",
+                                        command=self.go_back_button_callback)
+        self.go_back_button.grid(column=2,row=1, sticky="e", padx=10, pady=10)
+    
+    def go_back_button_callback(self):
+        from start_frame import StartFrame
+        self.destroy()
+        self.go_back_button.destroy()
+        self.start_frame = StartFrame(self.master)
+        self.start_frame.grid(row=0, column=0, columnspan=2, sticky="nesw", rowspan=3)
+    
+    
     
     def search_bar_callback(self, *args):
         search_bar_value = self.search_bar_var.get()
@@ -55,8 +72,12 @@ class ChooseSubjectFrame(ctk.CTkFrame):
             self.button_list.append(button)
         
     def button_callback(self, subject):
-        self.destroy()
+        self.destroy_elements()
         addquestion.AddQuestionsFrame(self.master, subject)
+    
+    def destroy_elements(self):
+        self.destroy()
+        self.go_back_button.destroy()
 
     def add_subject_button_callback(self):
         search_bar_value = self.search_bar_var.get()
@@ -69,7 +90,7 @@ class ChooseSubjectFrame(ctk.CTkFrame):
             CTkMessagebox(title="Error", message="This topic already exists!", icon="warning")
             return
         
-        self.destroy()
+        self.destroy_elements() 
         addquestion.AddQuestionsFrame(self.master, search_bar_value)
 
 

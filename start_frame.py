@@ -45,12 +45,12 @@ class StartFrame(ctk.CTkFrame):
     def add_questions(self):
         self.destroy()
         self.choose_subject_frame = ChooseSubjectFrame(self.master)
-        self.choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=2)
+        self.choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=3)
 
     def select_subject(self):
         self.destroy()
         self.choosequiz_frame = ChooseQuizFrame(self.master)
-        self.choosequiz_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20, columnspan=2)
+        self.choosequiz_frame.grid(column=0, row=0, sticky="nsew", padx=20, pady=20, columnspan=3)
     
     def remake_frame(self):
         self.destroy()

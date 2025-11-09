@@ -88,7 +88,7 @@ class AddQuestionsFrame:
         self.add_questions_frame.destroy()
         self.go_back_button.destroy()
         choose_subject_frame = choosesubjectframe.ChooseSubjectFrame(self.master)
-        choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=2)
+        choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=3)
 
     def input_callback(self, var, index, mode):
 
@@ -118,14 +118,6 @@ class AddQuestionsFrame:
             button.grid(row=row, column=col)
             
             col += 1
-
-
-
-        
-    
-    
-    def subject_optionmenu_callback(self, value):
-        pass
         
         
     def button_callback(self, word):

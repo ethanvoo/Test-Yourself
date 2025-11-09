@@ -23,13 +23,6 @@ class Main(ctk.CTk):
         
         
 
-    def back_to_home_btn(self):
-        self.back_to_home_button = ctk.CTkButton(self.main_frame, text="Back to Home", width=75, height=24, command=self.back_to_home_btn_callback)
-        self.back_to_home_button.grid(column=0, padx=20, pady=20, sticky="w")
-    
-    def back_to_home_btn_callback(self):
-        self.remake_frame()
-        self.start_menu()
         
     
         
