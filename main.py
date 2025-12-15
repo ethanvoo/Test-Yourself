@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import customtkinter as ctk
 
 from start_frame import StartFrame
@@ -29,7 +28,6 @@ class Main(ctk.CTk):
 main = Main()
 main.mainloop()
 
-=======
 import customtkinter as ctk
 
 from start_frame import StartFrame
@@ -60,4 +58,3 @@ class Main(ctk.CTk):
 main = Main()
 main.mainloop()
 
->>>>>>> 517dea2480b3a0eb13dac1b4bb20b7edf32e9b15
