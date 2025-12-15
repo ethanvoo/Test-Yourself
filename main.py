@@ -1,6 +1,4 @@
 import customtkinter as ctk
-import utility as util
-import colors
 
 from start_frame import StartFrame
 
@@ -12,7 +10,7 @@ class Main(ctk.CTk):
         super().__init__()
 
         self.title("Test Yourself")
-        self.geometry("600x600")
+        self.geometry("800x600")
 
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure((0, 1, 2), weight=1)

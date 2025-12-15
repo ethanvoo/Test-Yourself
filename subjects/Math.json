@@ -1,19 +1,22 @@
 {
     "1": [
         {
-            "question": "1+1",
+            "multiple_choice": false,
+            "question": "1",
+            "answer": "1",
+            "awarded_words": [],
+            "choices": []
+        },
+        {
+            "multiple_choice": true,
+            "question": "2",
             "answer": "2",
-            "awarded_words": []
-        },
-        {
-            "question": "2+2",
-            "answer": "4",
-            "awarded_words": []
-        },
-        {
-            "question": "5+5",
-            "answer": "10",
-            "awarded_words": []
+            "awarded_words": [],
+            "choices": [
+                "2",
+                "221",
+                "2214"
+            ]
         }
     ]
 }

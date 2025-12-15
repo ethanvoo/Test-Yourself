@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-import addquestion
+from addquestion import AddQuestionsFrame
 
 
 import utility as utils
@@ -73,7 +73,8 @@ class ChooseSubjectFrame(ctk.CTkFrame):
         
     def button_callback(self, subject):
         self.destroy_elements()
-        addquestion.AddQuestionsFrame(self.master, subject)
+        add_question_frame = AddQuestionsFrame(self.master, subject)
+        add_question_frame.grid()
     
     def destroy_elements(self):
         self.destroy()
@@ -91,7 +92,8 @@ class ChooseSubjectFrame(ctk.CTkFrame):
             return
         
         self.destroy_elements() 
-        addquestion.AddQuestionsFrame(self.master, search_bar_value)
+        add_question_frame = AddQuestionsFrame(self.master, search_bar_value)
+        add_question_frame.grid()
 
 
         
