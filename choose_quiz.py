@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import utility as util
 import colors
-import ask_questions
+from ask_questions import AskQuestionsFrame
 
 class ChooseQuizFrame(ctk.CTkFrame):
     def __init__(self, master):
@@ -110,8 +110,10 @@ class ChooseQuizFrame(ctk.CTkFrame):
     
     def create_question_frame(self):
         self.remake_frame()
+        self.go_back_button.destroy()
 
-        ask_questions.AskQuestionsFrame(self.master, selected_topics=self.selected_topics, subject=self.optionmenu_var.get(), question_index=self.question_index, current_score=0)
+        ask_questions_frame = AskQuestionsFrame(self.master, selected_topics=self.selected_topics, subject=self.optionmenu_var.get(), question_index=self.question_index, current_score=0)
+        ask_questions_frame.grid(row=0, column=0, sticky="nesw", columnspan=3)
     
     def go_back_callback(self):
         from start_frame import StartFrame
