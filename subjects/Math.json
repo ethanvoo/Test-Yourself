@@ -17,6 +17,13 @@
                 "221",
                 "2214"
             ]
+        },
+        {
+            "multiple_choice": false,
+            "question": "12",
+            "answer": "12",
+            "awarded_words": [],
+            "choices": []
         }
     ]
 }
