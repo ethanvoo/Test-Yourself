@@ -15,11 +15,13 @@ class AddQuestionsFrame(ctk.CTkFrame):
 
         if subject not in utils.get_subjects():
             utils.add_subject(self.subject_add_to)
+
+        def TopicQuestionFrame(self):
+            self.sixseveen = 1
         
-        self.grid(row=0, column=0, sticky="nesw", columnspan=2)
-        self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(3, weight=1)
-        self.grid_columnconfigure((0, 1), weight=1)
+        self.grid(row=0, column=0, sticky="nesw", columnspan=3, padx = 5, pady = 5)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure((0,1), weight=1)
 
         self.subject_label = ctk.CTkLabel(self,
                                                  text=self.subject_add_to,
@@ -71,11 +73,6 @@ class AddQuestionsFrame(ctk.CTkFrame):
         
 
         
-
-        self.go_back_button = ctk.CTkButton(self.master,
-                                        text="Go Back",
-                                        command=self.go_back_callback)
-        self.go_back_button.grid(column=1, sticky="e", padx=10, pady=10)
     
     def word_question_radio_callback(self):
         try:
@@ -96,7 +93,7 @@ class AddQuestionsFrame(ctk.CTkFrame):
         except Exception as e:
             print("Unable to delete frame Possibly no longer exists!", e)
         self.multiple_choice_frame = MultipleChoiceFrame(self, self.subject_add_to, self.topic_optionmenu_var.get())
-        self.multiple_choice_frame.grid(column=0, row=3, columnspan=3, padx=20, pady=20, sticky="nesw")
+        self.multiple_choice_frame.grid(column=0, row=3, columnspan=3, sticky="nesw")
 
 
     
@@ -124,15 +121,6 @@ class AddQuestionsFrame(ctk.CTkFrame):
 
         self.current_row += 1
         self.answer.set("")
-    
-    
-    
-    
-    def go_back_callback(self):
-        self.destroy()
-        self.go_back_button.destroy()
-        choose_subject_frame = choosesubjectframe.ChooseSubjectFrame(self.master)
-        choose_subject_frame.grid(column=0, row=0, sticky="nesw", padx=20, pady=20, columnspan=3)
 
             
 

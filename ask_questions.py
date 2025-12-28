@@ -70,7 +70,8 @@ class AskQuestionsFrame(ctk.CTkFrame):
             self.incorrect_answer_label = ctk.CTkLabel(self, text=f"Correct Answer: {self.answer}", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             self.incorrect_answer_label.grid(row=2, column=0, padx=20, pady=20, sticky="ew")
             
-            self.awarded_marks_label = ctk.CTkLabel(self, text=f"Marks given for {", ".join(self.awarded_words)}.", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
+            self.awarded_words.syntax = ", ".join(self.awarded_words)
+            self.awarded_marks_label = ctk.CTkLabel(self, text=f"Marks given for {self.awarded_words.syntax}", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))
             self.awarded_marks_label.grid(row=2, column=0, padx=20, pady=20, sticky="ew")
         else:
             self.incorrect_answer_label = ctk.CTkLabel(self, text=f"Correct Answer: {self.answer}", fg_color='transparent', font=("Calibre", 23), text_color=util.rgb_to_hex(colors.ERROR_TEXT_COLOR))

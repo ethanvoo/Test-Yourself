@@ -12,7 +12,7 @@ class MultipleChoiceFrame(ctk.CTkFrame):
 
         self.answer = ctk.StringVar()
 
-        self.grid(column=0, row=3, columnspan=3, padx=20, pady=20, sticky="nesw")
+        self.grid(column=0, row=3, columnspan=3, sticky="nesw")
         self.columnconfigure((0, 1), weight=1)
 
         self.add_question_label = ctk.CTkLabel(self, text='Add Question:', width=30, height=28, fg_color='transparent', font=("Calibre", 23))

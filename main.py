@@ -1,6 +1,14 @@
 import customtkinter as ctk
-
+import utility as util
+import colors
 from start_frame import StartFrame
+
+#customtkinter
+#ctkmessagebox
+#ctkchart
+#ctkcomponents
+#os
+#pillow
 
 ctk.set_appearance_mode("dark")
 
@@ -10,7 +18,7 @@ class Main(ctk.CTk):
         super().__init__()
 
         self.title("Test Yourself")
-        self.geometry("800x600")
+        self.geometry("1600x900")
 
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure((0, 1, 2), weight=1)
@@ -18,8 +26,6 @@ class Main(ctk.CTk):
 
         self.start_frame = StartFrame(self)
         self.start_frame.grid(row=0, column=0, columnspan=2, sticky="nesw", rowspan=3)
-        
-        
 
         
     
